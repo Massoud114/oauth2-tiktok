@@ -33,7 +33,7 @@ class TikTokAuthProvider extends AbstractProvider
      */
     public function getBaseAuthorizationUrl(): string
     {
-        return 'https://open-api.tiktok.com/platform/oauth/connect/';
+        return 'https://www.tiktok.com/auth/authorize/';
     }
 
     public function getBaseAccessTokenUrl(array $params): string
@@ -88,7 +88,7 @@ class TikTokAuthProvider extends AbstractProvider
     {
         // Documentation: https://developers.tiktok.com/doc/login-kit-user-info-basic
 
-        return 'https://open-api.tiktok.com/user/info/';
+        return 'https://open.tiktokapis.com/v2/user/info/';
     }
 
     /**
@@ -102,23 +102,22 @@ class TikTokAuthProvider extends AbstractProvider
 
         $options = [
             'headers' => $this->getDefaultHeaders(),
-            'body' => json_encode(
-                [
-                    'open_id' => $token->getResourceOwnerId(),
-                    'access_token' => $token->getToken(),
-                    'fields' => [
-                        "open_id",
-                        "union_id",
-                        "avatar_url",
-                        "avatar_url_100",
-                        "avatar_url_200",
-                        "avatar_large_url",
-                        "display_name",
-                        "profile_deep_link",
-                        "bio_description",
-                    ],
-                ]
-            ),
+	        'query' => [
+		        'fields' => [
+			        "open_id",
+			        "union_id",
+			        "avatar_url",
+			        "avatar_url_100",
+			        "avatar_url_200",
+			        "avatar_large_url",
+			        "display_name",
+			        "profile_deep_link",
+			        "bio_description",
+		        ],
+	        ],
+            'body' => json_encode([
+				'Authorization' => 'Bearer ' . $token->getToken(),
+            ]),
         ];
 
         $request = $this->createRequest(self::METHOD_POST, $url, null, $options);
